@@ -12,7 +12,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const loginObject = zod.object({
         email: zod.string().email(),
         password: zod.string().min(6)
-    })
+    });
 
     const { success } = loginObject.safeParse(req.body);
 
@@ -26,14 +26,14 @@ const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
         res.status(411);
-        throw new Error("User not found with this email, please register!!");
+        throw new Error('User not found with this email, please register!!');
     }
 
     // CHECK PASSWORD
     const correctPass = await bcrypt.compare(req.body.password, user.password);
     if (!correctPass) {
         res.status(411);
-        throw new Error("Invalid password!!");
+        throw new Error('Invalid password!!');
     }
 
     // TOKENS
@@ -58,11 +58,11 @@ const loginUser = asyncHandler(async (req, res) => {
             httpOnly: true,
         })
         .json({
-            message: "Successful login",
+            message: 'Successful login',
             accessToken,
             refreshToken
-        })
-})
+        });
+});
 
 // ------------------ SIGNUP USER ------------------
 const signupUser = asyncHandler(async (req, res) => {
@@ -77,21 +77,27 @@ const signupUser = asyncHandler(async (req, res) => {
     const { success } = signupObject.safeParse(req.body);
     if (!success) {
         res.status(411);
-        throw new Error("Invalid inputs!!");
+        throw new Error('Invalid inputs!!');
     }
 
     // MATCH INPUT PASSWORDS
     if (req.body.password1 !== req.body.password2) {
         res.status(411);
-        throw new Error("Passwords does not match!!");
+        throw new Error('Passwords does not match!!');
     }
 
     // CHECK USER EXISTENCE
     const userExists = await User.findOne({ email: req.body.email });
     if (userExists) {
         res.status(411);
-        throw new Error("User already exists with this email, please login!!");
+        throw new Error('User already exists with this email, please login!!');
     }
+
+    const avatar = req.file;
+    console.log('AVATAR: ', avatar);
+    // if (avatar) {
+    //     upload()
+    // }
 
     // CREATE USER
     const userCreated = await User.create({
@@ -112,7 +118,7 @@ const signupUser = asyncHandler(async (req, res) => {
     await RefreshToken.create({
         userId: userCreated._id,
         refreshToken
-    })
+    });
 
     // SET TOKEN IN COOKIE
     return res
@@ -126,10 +132,10 @@ const signupUser = asyncHandler(async (req, res) => {
             httpOnly: true,
         })
         .json({
-            message: "Successful signup",
+            message: 'Successful signup',
             accessToken,
             refreshToken
-        })
+        });
 });
 
 // ------------------ GENERATE ACCESS TOKEN FROM REFRESH TOKEN ------------------
@@ -137,7 +143,7 @@ const accessTokenFromRefreshToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if (!incomingRefreshToken) {
         res.status(403);
-        throw new Error("unauthorised request!!");
+        throw new Error('unauthorised request!!');
     }
 
     // CHECK IF TOKEN VERIFIED SUCCESSFULLY
@@ -145,7 +151,7 @@ const accessTokenFromRefreshToken = asyncHandler(async (req, res) => {
 
     if (!success) {
         res.status(404);
-        throw new Error("Invalid token!!");
+        throw new Error('Invalid token!!');
     }
 
     // GENERATE NEW ACCESS TOKEN
@@ -163,11 +169,11 @@ const accessTokenFromRefreshToken = asyncHandler(async (req, res) => {
             httpOnly: true,
         })
         .json({
-            message: "Access token updated.",
+            message: 'Access token updated.',
             accessToken,
             refreshToken: incomingRefreshToken
-        })
-})
+        });
+});
 
 
 // ------------------ UPDATE USER PROFILE ------------------
@@ -177,10 +183,11 @@ const updateProfile = asyncHandler(async (req, res) => {
     // CHECK USER EXISTANCE
     if (!user) {
         res.status(404);
-        throw new Error("User not found!!");
+        throw new Error('User not found!!');
     }
 
     // EXCLUDE PASSWORD UPDATION
+    // eslint-disable-next-line no-unused-vars
     const { password, ...others } = req.body;
 
     // UPDATE THE USER
@@ -191,12 +198,12 @@ const updateProfile = asyncHandler(async (req, res) => {
         }
     ).then(() => {
         return res.status(200).json({
-            message: "Successfully updated profile.",
-        })
+            message: 'Successfully updated profile.',
+        });
     }).catch((err) => {
         res.status(404);
         throw new Error(String(err));
-    })
+    });
 });
 
 
@@ -207,4 +214,4 @@ module.exports = {
     signupUser,
     accessTokenFromRefreshToken,
     updateProfile,
-}
+};

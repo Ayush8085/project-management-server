@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        default: "Employee"
+        default: 'Employee'
     },
     favoriteProjects: [
         { type: String }
@@ -36,21 +36,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png',
     },
-    refreshToken: {
-        type: String,
-    }
 }, { timestamps: true });
 
 // -------------- SAVE BEFORE UPDATING PASSWORD --------------
 userSchema.pre('save', async function (next) {
-    if (!this.isModified("password")) {
+    if (!this.isModified('password')) {
         return next();
     }
-    
+
     const hashPassword = await bcrypt.hash(this.password, 10);
     this.password = hashPassword;
-})
+});
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;
