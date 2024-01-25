@@ -140,6 +140,7 @@ const accessTokenFromRefreshToken = asyncHandler(async (req, res) => {
         throw new Error("unauthorised request!!");
     }
 
+    // CHECK IF TOKEN VERIFIED SUCCESSFULLY
     const { success, userId } = await verifyRefreshToken(incomingRefreshToken);
 
     if (!success) {
@@ -147,8 +148,10 @@ const accessTokenFromRefreshToken = asyncHandler(async (req, res) => {
         throw new Error("Invalid token!!");
     }
 
+    // GENERATE NEW ACCESS TOKEN
     const accessToken = generateAccessToken(userId);
 
+    // SET TO COOKIES
     return res
         .status(200)
         .cookie('accessToken', accessToken, {
