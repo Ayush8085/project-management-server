@@ -30,7 +30,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     // CHECK PASSWORD
-    const correctPass = bcrypt.compare(req.body.password, user.password);
+    const correctPass = await bcrypt.compare(req.body.password, user.password);
     if (!correctPass) {
         res.status(411);
         throw new Error("Invalid password!!");
@@ -180,13 +180,14 @@ const updateProfile = asyncHandler(async (req, res) => {
         throw new Error("User not found!!");
     }
 
+    // EXCLUDE PASSWORD UPDATION
+    const { password, ...others } = req.body;
+
     // UPDATE THE USER
     await User.updateOne(
-        { _id: req.userId },
+        { _id: user._id },
         {
-            username: req.body.username || user.username,
-            email: req.body.email || user.email,
-            password: req.body.password || user.email,
+            ...others
         }
     ).then(() => {
         return res.status(200).json({
