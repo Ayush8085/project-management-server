@@ -42,14 +42,13 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // -------------- SAVE BEFORE UPDATING PASSWORD --------------
-userSchema.pre('save', function (next) {
-    if (this.password.isModified) {
-        const hashPassword = bcrypt.hash(this.password);
-        this.password = hashPassword;
-        console.log("PASSWORD HASHED: ", hashPassword);
+userSchema.pre('save', async function (next) {
+    if (!this.isModified("password")) {
+        return next();
     }
-
-    next();
+    
+    const hashPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashPassword;
 })
 
 const User = mongoose.model("User", userSchema);
