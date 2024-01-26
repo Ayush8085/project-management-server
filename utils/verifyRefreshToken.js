@@ -4,22 +4,18 @@ const jwt = require("jsonwebtoken");
 const RefreshToken = require("../models/refreshTokenModel");
 
 const verifyRefreshToken = asyncHandler(async (refreshToken) => {
-  const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-  // console.log("DECODED: ", decoded);
+    const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
 
-  let result = {};
+    const validToken = await RefreshToken.findOne({
+        userId: decoded.userId,
+        refreshToken,
+    });
 
-  const validToken = await RefreshToken.findOne({
-    userId: decoded.userId,
-    refreshToken,
-  });
+    if (!validToken) {
+        return { success: false, userId: null };
+    }
 
-  if (!validToken) {
-    console.log("SUCCESS: FALSE");
-    return { success: false, userId: null };
-  }
-
-  return { success: true, userId: decoded.userId };
+    return { success: true, userId: decoded.userId };
 });
 
 module.exports = verifyRefreshToken;

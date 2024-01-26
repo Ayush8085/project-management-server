@@ -1,8 +1,8 @@
 const {
-  loginUser,
-  signupUser,
-  accessTokenFromRefreshToken,
-  updateProfile,
+    loginUser,
+    signupUser,
+    accessTokenFromRefreshToken,
+    updateProfile,
 } = require("../constrollers/userController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const upload = require("../utils/upload");
