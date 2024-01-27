@@ -20,7 +20,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     // CHECK INPUTS
     if (!success) {
-        res.status(404);
+        res.status(411);
         throw new Error("Invalid inputs!!");
     }
 
@@ -58,6 +58,8 @@ const loginUser = asyncHandler(async (req, res) => {
         })
         .json({
             message: "Successful login",
+            firstname: user.firstname,
+            email: user.email,
             accessToken,
             refreshToken,
         });
@@ -132,6 +134,8 @@ const signupUser = asyncHandler(async (req, res) => {
         })
         .json({
             message: "Successful signup",
+            firstname: req.body.firstname,
+            email: req.body.email,
             accessToken,
             refreshToken,
         });
@@ -186,7 +190,6 @@ const updateProfile = asyncHandler(async (req, res) => {
     }
 
     // EXCLUDE PASSWORD UPDATION
-    // eslint-disable-next-line no-unused-vars
     const { password, ...others } = req.body;
 
     // UPDATE THE USER
