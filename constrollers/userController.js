@@ -8,6 +8,8 @@ const {
 } = require("../utils/generateToken");
 const RefreshToken = require("../models/refreshTokenModel");
 const verifyRefreshToken = require("../utils/verifyRefreshToken");
+const cloudinary = require('cloudinary').v2;
+
 
 // ------------------ LOGIN USER ------------------
 const loginUser = asyncHandler(async (req, res) => {
@@ -94,12 +96,6 @@ const signupUser = asyncHandler(async (req, res) => {
         throw new Error("User already exists with this email, please login!!");
     }
 
-    const avatar = req.file;
-    console.log("AVATAR: ", avatar);
-    // if (avatar) {
-    //     upload()
-    // }
-
     // CREATE USER
     const userCreated = await User.create({
         firstname: req.body.firstname,
@@ -115,7 +111,6 @@ const signupUser = asyncHandler(async (req, res) => {
     const refreshToken = generateRefreshToken(userCreated._id);
 
     // ADD REFRESH TOKEN TO MODEL
-
     await RefreshToken.create({
         userId: userCreated._id,
         refreshToken,
@@ -192,22 +187,36 @@ const updateProfile = asyncHandler(async (req, res) => {
     // EXCLUDE PASSWORD UPDATION
     const { password, ...others } = req.body;
 
+    // UPLOAD AVATAR
+    const file = req.file;
+    if (file) {
+        cloudinary.uploader.upload(file.path, async function (err, result) {
+            if (err) {
+                console.log('UPLOAD ERR: ', String(err));
+            }
+            else {
+                await User.updateOne(
+                    { _id: user._id },
+                    { avatar: result.secure_url }
+                ).then(() => console.log('AVATAR UPDATED'))
+            }
+        });
+    }
+
     // UPDATE THE USER
-    await User.updateOne(
+    const updatedUser = await User.findOneAndUpdate(
         { _id: user._id },
         {
             ...others,
         }
-    )
-        .then(() => {
-            return res.status(200).json({
-                message: "Successfully updated profile.",
-            });
-        })
-        .catch((err) => {
-            res.status(404);
-            throw new Error(String(err));
-        });
+    ).select('-password')
+
+    return res.status(200).json({
+        message: "Successfully updated profile.",
+        user: updatedUser
+    });
+
+
 });
 
 module.exports = {

@@ -10,8 +10,8 @@ const upload = require("../utils/upload");
 const router = require("express").Router();
 
 router.post("/login", loginUser);
-router.post("/signup", upload.single("image"), signupUser);
-router.put("/update-profile", authMiddleware, updateProfile);
+router.post("/signup", signupUser);
+router.put("/update-profile", authMiddleware, upload.single("image"), updateProfile);
 router.get("/refresh", accessTokenFromRefreshToken);
 
 module.exports = router;

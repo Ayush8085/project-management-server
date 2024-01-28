@@ -3,7 +3,7 @@ const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = require("../config");
 
 // ------------------ GENERATE ACCESS TOKEN ------------------
 const generateAccessToken = (userId) => {
-    return jwt.sign({ userId }, ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+    return jwt.sign({ userId }, ACCESS_TOKEN_SECRET, { expiresIn: "1d" });
 };
 
 // ------------------ GENERATE REFRESG TOKEN ------------------
