@@ -102,8 +102,6 @@ const signupUser = asyncHandler(async (req, res) => {
         lastname: req.body.lastname,
         email: req.body.email,
         password: req.body.password1,
-        status: req.body.status,
-        role: req.body.role,
     });
 
     // TOKENS
