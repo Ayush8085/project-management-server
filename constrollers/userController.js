@@ -8,8 +8,7 @@ const {
 } = require("../utils/generateToken");
 const RefreshToken = require("../models/refreshTokenModel");
 const verifyRefreshToken = require("../utils/verifyRefreshToken");
-const cloudinary = require('cloudinary').v2;
-
+const cloudinary = require("cloudinary").v2;
 
 // ------------------ LOGIN USER ------------------
 const loginUser = asyncHandler(async (req, res) => {
@@ -190,13 +189,12 @@ const updateProfile = asyncHandler(async (req, res) => {
     if (file) {
         cloudinary.uploader.upload(file.path, async function (err, result) {
             if (err) {
-                console.log('UPLOAD ERR: ', String(err));
-            }
-            else {
+                console.log("UPLOAD ERR: ", String(err));
+            } else {
                 await User.updateOne(
                     { _id: user._id },
                     { avatar: result.secure_url }
-                ).then(() => console.log('AVATAR UPDATED'))
+                ).then(() => console.log("AVATAR UPDATED"));
             }
         });
     }
@@ -207,19 +205,21 @@ const updateProfile = asyncHandler(async (req, res) => {
         {
             ...others,
         }
-    ).select('-password')
+    ).select("-password");
 
     return res.status(200).json({
         message: "Successfully updated profile.",
-        user: updatedUser
+        user: updatedUser,
     });
-
-
 });
+
+// ------------------ UPDATE USER PROFILE ------------------
+const getUserProfile = asyncHandler(async (req, res) => {});
 
 module.exports = {
     loginUser,
     signupUser,
     accessTokenFromRefreshToken,
     updateProfile,
+    getUserProfile,
 };
