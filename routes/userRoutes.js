@@ -4,7 +4,7 @@ const {
     accessTokenFromRefreshToken,
     updateProfile,
     getUserProfile,
-} = require("../constrollers/userController");
+} = require("../controllers/userController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const upload = require("../utils/upload");
 
