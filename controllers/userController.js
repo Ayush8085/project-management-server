@@ -143,7 +143,7 @@ const accessTokenFromRefreshToken = asyncHandler(async (req, res) => {
     }
 
     // CHECK IF TOKEN VERIFIED SUCCESSFULLY
-    const { success, userId } = await verifyRefreshToken(incomingRefreshToken);
+    const { success, userId } = verifyRefreshToken(incomingRefreshToken);
 
     if (!success) {
         res.status(404);

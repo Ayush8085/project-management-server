@@ -7,6 +7,8 @@ const errorMiddleware = (err, req, res, next) => {
         message: err.message,
         stack: NODE_ENV === "dev" ? err.stack : null,
     });
+
+    next();
 };
 
 module.exports = errorMiddleware;
