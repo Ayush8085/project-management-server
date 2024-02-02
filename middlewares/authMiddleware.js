@@ -3,14 +3,18 @@ const jwt = require("jsonwebtoken");
 const { ACCESS_TOKEN_SECRET } = require("../config");
 
 const authMiddleware = asyncHandler(async (req, res, next) => {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        res.status(403);
-        throw new Error("Missing/Invalid token");
+    let token = req.cookies.accessToken;
+    if(!token) {
+        const authHeader = req.headers.authorization;
+    
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            res.status(403);
+            throw new Error("Missing/Invalid token");
+        }
+    
+        token = authHeader.split(" ")[1];
     }
 
-    const token = authHeader.split(" ")[1];
     if (!token) {
         res.status(403);
         throw new Error("Token missing!!");
