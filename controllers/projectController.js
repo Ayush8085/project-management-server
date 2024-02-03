@@ -19,7 +19,7 @@ const createProject = asyncHandler(async (req, res) => {
     // CREATING PROJECT
     const createdProject = await Project.create({
         title: req.body.title,
-        creator: req.userId,
+        owner: req.userId,
         admins: [req.userId],
     });
 
