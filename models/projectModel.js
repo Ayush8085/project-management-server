@@ -15,8 +15,22 @@ const projectSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-        admins: [{ type: mongoose.Schema.Types.ObjectId }],
-        users: [{ type: mongoose.Schema.Types.ObjectId }],
+        admins: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
+        users: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
+        updatedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
     },
     { timestamps: true }
 );

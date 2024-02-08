@@ -28,13 +28,13 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            default: "Employee",
+            default: "user",
         },
         favoriteProjects: [{ type: String }],
         avatar: {
             type: String,
             default:
-                "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png",
+                "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
         },
     },
     { timestamps: true }
