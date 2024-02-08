@@ -4,14 +4,14 @@ const { ACCESS_TOKEN_SECRET } = require("../config");
 
 const authMiddleware = asyncHandler(async (req, res, next) => {
     let token = req.cookies.accessToken;
-    if(!token) {
+    if (!token) {
         const authHeader = req.headers.authorization;
-    
+
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             res.status(403);
             throw new Error("Missing/Invalid token");
         }
-    
+
         token = authHeader.split(" ")[1];
     }
 

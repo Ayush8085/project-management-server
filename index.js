@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const userRoutes = require("./routes/userRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 const cors = require("cors");
+const authMiddleware = require("./middlewares/authMiddleware");
 
 const app = express();
 
@@ -20,6 +22,7 @@ app.use(cookieParser());
 
 // ------------- ROUTES MIDDLEWARES -------------
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/projects", authMiddleware, projectRoutes);
 
 // ------------- ERROR MIDDLEWARE -------------
 app.use(errorMiddleware);
