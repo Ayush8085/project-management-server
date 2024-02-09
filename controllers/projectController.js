@@ -7,7 +7,7 @@ const User = require("../models/userModel");
 const createProject = asyncHandler(async (req, res) => {
     const projectObject = zod.object({
         title: zod.string(),
-        key: zod.string(),
+        key: zod.string().min(3).max(5),
     });
 
     const { success } = projectObject.safeParse(req.body);
@@ -16,13 +16,6 @@ const createProject = asyncHandler(async (req, res) => {
     if (!success) {
         res.status(411);
         throw new Error("Invalid inputs!!");
-    }
-
-    // CHECK IF USER IS ADMIN
-    const user = await User.findById(req.userId);
-    if (user.role !== "admin") {
-        res.status(403);
-        throw new Error("Only admin can create projects!!");
     }
 
     // CREATING PROJECT
@@ -54,7 +47,6 @@ const getAllProjects = asyncHandler(async (req, res) => {
 
 // ------------------ GET A PROJECT ------------------
 const getProject = asyncHandler(async (req, res) => {
-    // const project = await Project.findById(req.params.id);
     const project = await Project.findOne({
         _id: req.params.id,
         $or: [
@@ -62,7 +54,7 @@ const getProject = asyncHandler(async (req, res) => {
             { admins: req.userId },
             { users: req.userId },
         ],
-    });
+    }).populate("owner");
 
     // CHECK IF PROJECT EXISTS
     if (!project) {
