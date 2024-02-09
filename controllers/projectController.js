@@ -7,6 +7,7 @@ const User = require("../models/userModel");
 const createProject = asyncHandler(async (req, res) => {
     const projectObject = zod.object({
         title: zod.string(),
+        key: zod.string(),
     });
 
     const { success } = projectObject.safeParse(req.body);
@@ -27,6 +28,7 @@ const createProject = asyncHandler(async (req, res) => {
     // CREATING PROJECT
     const createdProject = await Project.create({
         title: req.body.title,
+        key: req.body.key,
         owner: req.userId,
         admins: [req.userId],
     });
