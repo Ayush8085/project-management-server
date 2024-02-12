@@ -38,7 +38,7 @@ const getAllProjects = asyncHandler(async (req, res) => {
 
     const projects = await Project.find({
         $or: [{ owner: userId }, { admins: userId }, { users: userId }],
-    });
+    }).populate("owner");
 
     return res.status(200).json({
         projects,
