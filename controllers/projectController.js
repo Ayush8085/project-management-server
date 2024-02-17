@@ -100,9 +100,11 @@ const updateProject = asyncHandler(async (req, res) => {
         },
         {
             title: req.body.title,
-            description: req.body.description,
+            projectType: req.body.projectType,
+            projectTemplate: req.body.projectTemplate,
             updatedBy: req.userId,
-        }
+        },
+        { runValidators: true }
     );
 
     return res.status(200).json({

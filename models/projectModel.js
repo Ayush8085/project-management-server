@@ -6,8 +6,16 @@ const projectSchema = new mongoose.Schema(
             type: String,
             trim: true,
         },
-        description: {
+        projectType: {
             type: String,
+            enum: ["company-managed", "team-managed"],
+            default: "team-managed",
+            trim: true,
+        },
+        projectTemplate: {
+            type: String,
+            enum: ["KANBAN", "SCRUM"],
+            default: "KANBAN",
             trim: true,
         },
         key: {
