@@ -70,6 +70,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const signupUser = asyncHandler(async (req, res) => {
     const signupObject = zod.object({
         firstname: zod.string(),
+        lastname: zod.string().optional(),
         email: zod.string().email(),
         password1: zod.string().min(6),
         password2: zod.string().min(6),

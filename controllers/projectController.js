@@ -1,7 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const zod = require("zod");
 const Project = require("../models/projectModel");
-const User = require("../models/userModel");
 
 // ------------------ CREATE PROJECT ------------------
 const createProject = asyncHandler(async (req, res) => {
@@ -22,9 +21,14 @@ const createProject = asyncHandler(async (req, res) => {
     const createdProject = await Project.create({
         title: req.body.title,
         key: req.body.key,
+        projectType: req.body.projectType,
+        projectTemplate: req.body.projectTemplate,
         owner: req.userId,
         admins: [req.userId],
     });
+
+    // Populate user
+    await createdProject.populate('owner');
 
     return res.status(201).json({
         message: "Project created successfully!!",
@@ -71,7 +75,7 @@ const getProject = asyncHandler(async (req, res) => {
 
 // ------------------ DELETE A PROJECT ------------------
 const deleteProject = asyncHandler(async (req, res) => {
-    const project = await Project.findByIdAndDelete(req.params.id);
+    const project = await Project.findById(req.params.id);
 
     // CHECK IF PROJECT EXISTS
     if (!project) {
@@ -85,6 +89,8 @@ const deleteProject = asyncHandler(async (req, res) => {
         res.status(403);
         throw new Error("Only OWner can delete this project!!");
     }
+
+    await Project.deleteOne({ _id: req.params.id });
 
     return res.status(200).json({
         message: "Project deleted successfully!!",
