@@ -40,6 +40,12 @@ const projectSchema = new mongoose.Schema(
                 ref: "User",
             },
         ],
+        issues: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Issue",
+            },
+        ],
         updatedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
