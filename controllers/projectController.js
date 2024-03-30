@@ -29,7 +29,7 @@ const createProject = asyncHandler(async (req, res) => {
     });
 
     // Populate user
-    await createdProject.populate('owner');
+    await createdProject.populate("owner");
 
     return res.status(201).json({
         message: "Project created successfully!!",
@@ -144,16 +144,16 @@ const addFavouriteProject = asyncHandler(async (req, res) => {
         req.userId,
         {
             $push: {
-                favoriteProjects: req.params.id
-            }
+                favoriteProjects: req.params.id,
+            },
         },
         { runValidators: true }
-    )
+    );
 
     return res.status(200).json({
-        message: "Project added to favourite successfully!!"
-    })
-})
+        message: "Project added to favourite successfully!!",
+    });
+});
 
 // ------------------ REMOVE A FAVOURITE PROJECT ------------------
 const removeFavouriteProject = asyncHandler(async (req, res) => {
@@ -179,16 +179,16 @@ const removeFavouriteProject = asyncHandler(async (req, res) => {
         req.userId,
         {
             $pull: {
-                favoriteProjects: req.params.id
-            }
+                favoriteProjects: req.params.id,
+            },
         },
         { runValidators: true }
-    )
+    );
 
     return res.status(200).json({
-        message: "Project removed from favourite successfully!!"
-    })
-})
+        message: "Project removed from favourite successfully!!",
+    });
+});
 
 module.exports = {
     getAllProjects,
