@@ -30,7 +30,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "user",
         },
-        favoriteProjects: [{ type: String }],
+        favoriteProjects: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Project'
+        }],
         avatar: {
             type: String,
             default:
