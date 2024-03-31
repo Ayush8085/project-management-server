@@ -50,6 +50,36 @@ const createIssue = asyncHandler(async (req, res) => {
     });
 });
 
+// ------------------- DELETE ISSUE --------------------
+const deleteIssue = asyncHandler(async (req, res) => {
+    // CHECK IF ISSUE EXISTS
+    const issue = await Issue.findById(req.params.id);
+    if (!issue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    // REMOVE ISSUE FROM THE PROJECT
+    await Project.findOneAndUpdate(
+        {
+            _id: issue.projectId,
+            $or: [{ owner: req.userId }, { admins: req.userId }],
+        },
+        {
+            $pull: {
+                issues: issue.id,
+            },
+        },
+        { runValidators: true }
+    );
+    await issue.deleteOne();
+
+    return res.status(200).json({
+        message: "Issue deleted from the project!!",
+    });
+});
+
 module.exports = {
     createIssue,
+    deleteIssue,
 };
