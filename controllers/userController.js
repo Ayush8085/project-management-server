@@ -216,7 +216,9 @@ const updateProfile = asyncHandler(async (req, res) => {
 
 // ------------------ UPDATE USER PROFILE ------------------
 const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.userId).select("-password");
+    const user = await User.findById(req.userId)
+        .populate("favoriteProjects")
+        .select("-password");
 
     // CHECK USER EXISTANCE
     if (!user) {

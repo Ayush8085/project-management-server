@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const zod = require("zod");
 const Project = require("../models/projectModel");
+const User = require("../models/userModel");
 
 // ------------------ CREATE PROJECT ------------------
 const createProject = asyncHandler(async (req, res) => {
@@ -28,7 +29,7 @@ const createProject = asyncHandler(async (req, res) => {
     });
 
     // Populate user
-    await createdProject.populate('owner');
+    await createdProject.populate("owner");
 
     return res.status(201).json({
         message: "Project created successfully!!",
@@ -119,10 +120,82 @@ const updateProject = asyncHandler(async (req, res) => {
     });
 });
 
+// ------------------ ADD A FAVOURITE PROJECT ------------------
+const addFavouriteProject = asyncHandler(async (req, res) => {
+    const project = await Project.findOne({
+        _id: req.params.id,
+        $or: [
+            { owner: req.userId },
+            { admins: req.userId },
+            { users: req.userId },
+        ],
+    }).populate("owner");
+
+    // CHECK IF PROJECT EXISTS
+    if (!project) {
+        res.status(404);
+        throw new Error(
+            "Project not found or you are not permitted on this project!!"
+        );
+    }
+
+    // ADD TO FAVOURITE
+    await User.findByIdAndUpdate(
+        req.userId,
+        {
+            $push: {
+                favoriteProjects: req.params.id,
+            },
+        },
+        { runValidators: true }
+    );
+
+    return res.status(200).json({
+        message: "Project added to favourite successfully!!",
+    });
+});
+
+// ------------------ REMOVE A FAVOURITE PROJECT ------------------
+const removeFavouriteProject = asyncHandler(async (req, res) => {
+    const project = await Project.findOne({
+        _id: req.params.id,
+        $or: [
+            { owner: req.userId },
+            { admins: req.userId },
+            { users: req.userId },
+        ],
+    }).populate("owner");
+
+    // CHECK IF PROJECT EXISTS
+    if (!project) {
+        res.status(404);
+        throw new Error(
+            "Project not found or you are not permitted on this project!!"
+        );
+    }
+
+    // ADD TO FAVOURITE
+    await User.findByIdAndUpdate(
+        req.userId,
+        {
+            $pull: {
+                favoriteProjects: req.params.id,
+            },
+        },
+        { runValidators: true }
+    );
+
+    return res.status(200).json({
+        message: "Project removed from favourite successfully!!",
+    });
+});
+
 module.exports = {
     getAllProjects,
     getProject,
     createProject,
     deleteProject,
     updateProject,
+    addFavouriteProject,
+    removeFavouriteProject,
 };
