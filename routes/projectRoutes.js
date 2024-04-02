@@ -17,7 +17,7 @@ router.get("/get-all-fav-projects", getAllFavouriteProjects);
 router.get("/:id", getProject);
 router.delete("/:id", deleteProject);
 router.put("/:id", updateProject);
-router.get("/add-favour-project/:id", addFavouriteProject);
-router.get("/remove-favour-project/:id", removeFavouriteProject);
+router.post("/add-favour-project/:id", addFavouriteProject);
+router.post("/remove-favour-project/:id", removeFavouriteProject);
 
 module.exports = router;
