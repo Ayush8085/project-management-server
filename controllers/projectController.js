@@ -193,12 +193,9 @@ const removeFavouriteProject = asyncHandler(async (req, res) => {
 // ------------------ GET ALL FAVOURITE PROJECT ------------------
 const getAllFavouriteProjects = asyncHandler(async (req, res) => {
     const userData = await User.findById(req.userId);
-    const favoriteProjects = await Project.find({
-        _id: { $in: userData.favoriteProjects },
-    });
 
     return res.status(200).json({
-        favoriteProjects,
+        favoriteProjects: userData.favoriteProjects,
     });
 });
 
