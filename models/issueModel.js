@@ -7,9 +7,13 @@ const issueSchema = new mongoose.Schema(
             ref: "Project",
             required: true,
         },
-        // title: {
-        //     type: String,
-        // },
+        parentIssue: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Issue",
+        },
+        title: {
+            type: String,
+        },
         description: {
             type: String,
         },
@@ -18,6 +22,16 @@ const issueSchema = new mongoose.Schema(
             enum: ["epic", "task", "subtask", "story", "bug"],
             default: "task",
         },
+        attachment: {
+            type: Object,
+            default: {},
+        },
+        childIssues: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Issue",
+            },
+        ],
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
