@@ -225,9 +225,20 @@ const getUserProfile = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("User not found!!");
     }
-    return res.status(200).json({
-        user,
-    });
+
+    // GENERATE NEW ACCESS TOKEN
+    const accessToken = generateAccessToken(req.userId);
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, {
+            secure: false,
+            httpOnly: true,
+        })
+        .json({
+            user,
+            accessToken,
+        });
 });
 
 module.exports = {
