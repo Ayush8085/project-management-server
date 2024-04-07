@@ -134,6 +134,18 @@ const signupUser = asyncHandler(async (req, res) => {
         });
 });
 
+// ------------------ LOGOUT USER ------------------
+const logoutUser = asyncHandler(async (req, res) => {
+    // CLEAR COOKIES
+    return res
+        .status(200)
+        .clearCookie("accessToken")
+        .clearCookie("refreshToken")
+        .json({
+            message: "Successful logout",
+        });
+});
+
 // ------------------ GENERATE ACCESS TOKEN FROM REFRESH TOKEN ------------------
 const accessTokenFromRefreshToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken =
@@ -244,6 +256,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 module.exports = {
     loginUser,
     signupUser,
+    logoutUser,
     accessTokenFromRefreshToken,
     updateProfile,
     getUserProfile,

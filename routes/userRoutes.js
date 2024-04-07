@@ -4,6 +4,7 @@ const {
     accessTokenFromRefreshToken,
     updateProfile,
     getUserProfile,
+    logoutUser,
 } = require("../controllers/userController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const upload = require("../utils/upload");
@@ -12,6 +13,7 @@ const router = require("express").Router();
 
 router.post("/login", loginUser);
 router.post("/signup", signupUser);
+router.get("/logout", logoutUser);
 router.get("/get-profile", authMiddleware, getUserProfile);
 router.put(
     "/update-profile",
