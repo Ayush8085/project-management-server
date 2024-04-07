@@ -46,6 +46,10 @@ const projectSchema = new mongoose.Schema(
                 ref: "Issue",
             },
         ],
+        issue_count: {
+            type: Number,
+            default: 0,
+        },
         updatedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
