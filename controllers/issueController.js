@@ -8,7 +8,7 @@ const cloudinary = require("cloudinary").v2;
 const createIssue = asyncHandler(async (req, res) => {
     const issueObject = zod.object({
         projectId: zod.string(),
-        description: zod.string(),
+        title: zod.string(),
     });
 
     const { success } = issueObject.safeParse(req.body);
