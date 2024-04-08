@@ -172,9 +172,37 @@ const getAttachment = asyncHandler(async (req, res) => {
     return res.redirect(issue.attachment.path);
 });
 
+// ------------------- UPDATE STATUS OF ISSUE --------------------
+const updateIssueStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    if (!status) {
+        res.status(404);
+        throw new Error("Please provide status!!");
+    }
+
+    // CHECK IF ISSUE EXISTS
+    const issue = await Issue.findByIdAndUpdate(
+        req.params.id,
+        {
+            status,
+        },
+        { runValidators: true }
+    );
+    if (!issue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    return res.status(200).json({
+        message: "Status updated successfully!!",
+    })
+})
+
+
 module.exports = {
     createIssue,
     getAllIssues,
+    updateIssueStatus,
     deleteIssue,
     uploadAttachment,
     getAttachment,
