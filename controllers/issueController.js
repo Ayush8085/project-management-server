@@ -25,13 +25,13 @@ const createIssue = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Project not found!!");
     }
-    // const issueCount = isProject.issue_count + 1;
 
     // CREATING ISSUE
     const createdIssue = await Issue.create({
         projectId: req.body.projectId,
         title: req.body.title,
         description: req.body.description,
+        status: req.body.status,
         type: req.body.type,
         createdBy: req.userId,
         key: `${isProject.key}-${isProject.issue_count + 1}`,

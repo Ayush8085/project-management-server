@@ -26,6 +26,11 @@ const issueSchema = new mongoose.Schema(
             enum: ["epic", "task", "subtask", "story", "bug"],
             default: "task",
         },
+        status: {
+            type: String,
+            enum: ["todo", "inprogress", "done"],
+            default: "todo"
+        },
         attachment: {
             type: Object,
             default: {},
