@@ -110,6 +110,126 @@ const deleteIssue = asyncHandler(async (req, res) => {
     });
 });
 
+// ------------------- UPDATE STATUS OF ISSUE --------------------
+const updateIssueStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    if (!status) {
+        res.status(404);
+        throw new Error("Please provide status!!");
+    }
+
+    // CHECK IF ISSUE EXISTS
+    const issue = await Issue.findByIdAndUpdate(
+        req.params.id,
+        {
+            status,
+        },
+        { runValidators: true }
+    );
+    if (!issue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    return res.status(200).json({
+        message: "Status updated successfully!!",
+    });
+});
+
+// ------------------- ADD CHILD TO ISSUE --------------------
+const addChildIssue = asyncHandler(async (req, res) => {
+    const issueObject = zod.object({
+        projectId: zod.string(),
+        title: zod.string(),
+    });
+
+    const { success } = issueObject.safeParse(req.body);
+
+    // CHECK INPUTS
+    if (!success) {
+        res.status(411);
+        throw new Error("Invalid inputs!!");
+    }
+
+    // CHECK IF PROJECT EXISTS
+    const isProject = await Project.findById(req.body.projectId);
+    if (!isProject) {
+        res.status(404);
+        throw new Error("Project not found!!");
+    }
+
+    // CREATING ISSUE
+    const createdIssue = await Issue.create({
+        projectId: req.body.projectId,
+        parentIssue: req.params.id,
+        title: req.body.title,
+        description: req.body.description,
+        status: req.body.status,
+        type: req.body.type,
+        createdBy: req.userId,
+        key: `${isProject.key}-${isProject.issue_count + 1}`,
+    });
+
+    // INCREMENT ISSUE COUNT
+    await isProject.updateOne({ $inc: { issue_count: 1 } });
+
+    // CHECK IF ISSUE EXISTS AND ADD CHILD
+    const issue = await Issue.findByIdAndUpdate(
+        req.params.id,
+        {
+            $push: {
+                childIssues: createdIssue.id,
+            },
+        },
+        { runValidators: true }
+    );
+
+    if (!issue) {
+        await createdIssue.deleteOne();
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    return res.status(201).json({
+        message: "Child added to issue successfully!!",
+    });
+});
+
+// ------------------- REMOVE CHILD TO ISSUE --------------------
+const removeChildIssue = asyncHandler(async (req, res) => {
+    // CHECK INPUTS
+    const { childId } = req.body;
+    if (!childId) {
+        res.status(404);
+        throw new Error("Child id required!!");
+    }
+
+    const child = await Issue.findByIdAndDelete(childId);
+    if (!child) {
+        res.status(404);
+        throw new Error("Child issue not found!!");
+    }
+
+    // CHECK IF ISSUE EXISTS
+    const issue = await Issue.findByIdAndUpdate(
+        req.params.id,
+        {
+            $pull: {
+                childIssues: childId,
+            },
+        },
+        { runValidators: true }
+    );
+    if (!issue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    return res.status(200).json({
+        message: "Child issue removed successfully!!",
+    });
+});
+
 // ------------------- UPLOAD ATTACHMENT ON ISSUE --------------------
 const uploadAttachment = asyncHandler(async (req, res) => {
     // CHECK IF ISSUE EXISTS
@@ -123,28 +243,15 @@ const uploadAttachment = asyncHandler(async (req, res) => {
     const file = req.file;
     if (file) {
         console.log("FILE: ", file);
+        const fileData = {
+            path: file.path,
+            originalName: file.originalname,
+        };
 
-        // await Issue.findByIdAndUpdate(
-        //     req.params.id,
-        //     {
-        //         attachment: fileData
-        //     }
-        // ).then(() => console.log("ATTACHMENT ADDED"))
-
-        // ADD TO CLOUDINARY
-        cloudinary.uploader.upload(file.path, async function (err, result) {
-            if (err) {
-                console.log("Attachment err: ", String(err));
-            } else {
-                const fileData = {
-                    path: result.secure_url,
-                    originalName: result.original_filename,
-                };
-                await Issue.findByIdAndUpdate(req.params.id, {
-                    attachment: fileData,
-                }).then(() => console.log("ATTACHMENT ADDED"));
-            }
-        });
+        // SAVE TO DB
+        await Issue.findByIdAndUpdate(req.params.id, {
+            attachment: fileData,
+        }).then(() => console.log("ATTACHMENT ADDED"));
     }
 
     return res.status(200).json({
@@ -172,33 +279,6 @@ const getAttachment = asyncHandler(async (req, res) => {
     return res.redirect(issue.attachment.path);
 });
 
-// ------------------- UPDATE STATUS OF ISSUE --------------------
-const updateIssueStatus = asyncHandler(async (req, res) => {
-    const { status } = req.body;
-    if (!status) {
-        res.status(404);
-        throw new Error("Please provide status!!");
-    }
-
-    // CHECK IF ISSUE EXISTS
-    const issue = await Issue.findByIdAndUpdate(
-        req.params.id,
-        {
-            status,
-        },
-        { runValidators: true }
-    );
-    if (!issue) {
-        res.status(404);
-        throw new Error("Issue not found!!");
-    }
-
-    return res.status(200).json({
-        message: "Status updated successfully!!",
-    })
-})
-
-
 module.exports = {
     createIssue,
     getAllIssues,
@@ -206,4 +286,6 @@ module.exports = {
     deleteIssue,
     uploadAttachment,
     getAttachment,
+    addChildIssue,
+    removeChildIssue,
 };

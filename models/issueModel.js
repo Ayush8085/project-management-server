@@ -29,7 +29,7 @@ const issueSchema = new mongoose.Schema(
         status: {
             type: String,
             enum: ["todo", "inprogress", "done"],
-            default: "todo"
+            default: "todo",
         },
         attachment: {
             type: Object,
