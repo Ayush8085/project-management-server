@@ -242,7 +242,6 @@ const uploadAttachment = asyncHandler(async (req, res) => {
     // ADD ATTACHMENT
     const file = req.file;
     if (file) {
-        console.log("FILE: ", file);
         const fileData = {
             path: file.path,
             originalName: file.originalname,
@@ -251,7 +250,11 @@ const uploadAttachment = asyncHandler(async (req, res) => {
         // SAVE TO DB
         await Issue.findByIdAndUpdate(req.params.id, {
             attachment: fileData,
-        }).then(() => console.log("ATTACHMENT ADDED"));
+        }).then(() => console.log("ATTACHMENT ADDED"))
+            .catch((err) => {
+                res.status(404);
+                throw new Error(err);
+            });
     }
 
     return res.status(200).json({
@@ -275,8 +278,7 @@ const getAttachment = asyncHandler(async (req, res) => {
     }
 
     // DOWNLOAD ATTACHMENT
-    // return res.download(issue.attachment.path, issue.attachment.originalName);
-    return res.redirect(issue.attachment.path);
+    return res.download(issue.attachment.path, issue.attachment.originalName);
 });
 
 module.exports = {
