@@ -62,7 +62,11 @@ const getAllIssues = asyncHandler(async (req, res) => {
     // CHECK IF PROJECT EXISTS
     const project = await Project.findOne({
         _id: req.params.id,
-        $or: [{ owner: req.userId }, { admins: req.userId }],
+        $or: [
+            { owner: req.userId },
+            { admins: req.userId },
+            { users: req.userId },
+        ],
     });
 
     if (!project) {
