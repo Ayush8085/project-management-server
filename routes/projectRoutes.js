@@ -16,13 +16,13 @@ const router = require("express").Router();
 router.post("/create-project", createProject);
 router.get("/", getAllProjects);
 router.get("/get-all-fav-projects", getAllFavouriteProjects);
-router.get("/:id", getProject);
-router.delete("/:id", deleteProject);
-router.put("/:id", updateProject);
-router.post("/add-favour-project/:id", addFavouriteProject);
-router.post("/remove-favour-project/:id", removeFavouriteProject);
+router.get("/:projectId", getProject);
+router.delete("/:projectId", deleteProject);
+router.put("/:projectId", updateProject);
+router.post("/add-favour-project/:projectId", addFavouriteProject);
+router.post("/remove-favour-project/:projectId", removeFavouriteProject);
 
-router.post("/add-user/:id", addUserToProject);
-router.post("/remove-user/:id", removeUserToProject);
+router.post("/add-user/:projectId", addUserToProject);
+router.post("/remove-user/:projectId", removeUserToProject);
 
 module.exports = router;

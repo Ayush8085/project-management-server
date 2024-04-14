@@ -15,13 +15,13 @@ const upload = require("../utils/upload");
 const router = express.Router();
 
 router.post("/create-issue", createIssue);
-router.get("/get-all/:id", getAllIssues);
-router.get("/get-one/:id", getOneIssue);
-router.post("/update-status/:id", updateIssueStatus);
-router.post("/add-child-issue/:id", addChildIssue);
-router.delete("/remove-child-issue/:id", removeChildIssue);
-router.delete("/:id", deleteIssue);
-router.post("/add-attachment/:id", upload.single("file"), uploadAttachment);
-router.get("/get-attachment/:id", getAttachment);
+router.get("/get-all/:projectId", getAllIssues);
+router.get("/get-one/:issueId", getOneIssue);
+router.post("/update-status/:issueId", updateIssueStatus);
+router.post("/add-child-issue/:issueId", addChildIssue);
+router.delete("/remove-child-issue/:issueId", removeChildIssue);
+router.delete("/:issueId", deleteIssue);
+router.post("/add-attachment/:issueId", upload.single("file"), uploadAttachment);
+router.get("/get-attachment/:issueId", getAttachment);
 
 module.exports = router;

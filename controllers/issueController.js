@@ -2,7 +2,6 @@ const asyncHandler = require("express-async-handler");
 const zod = require("zod");
 const Project = require("../models/projectModel");
 const Issue = require("../models/issueModel");
-const cloudinary = require("cloudinary").v2;
 
 // ------------------- CREATE ISSUE --------------------
 const createIssue = asyncHandler(async (req, res) => {
@@ -61,7 +60,7 @@ const createIssue = asyncHandler(async (req, res) => {
 const getAllIssues = asyncHandler(async (req, res) => {
     // CHECK IF PROJECT EXISTS
     const project = await Project.findOne({
-        _id: req.params.id,
+        _id: req.params.projectId,
         $or: [
             { owner: req.userId },
             { admins: req.userId },
@@ -77,7 +76,7 @@ const getAllIssues = asyncHandler(async (req, res) => {
     }
 
     // GET ALL ISSUES THAN
-    const issues = await Issue.find({ projectId: req.params.id }).populate(
+    const issues = await Issue.find({ projectId: req.params.projectId }).populate(
         "createdBy"
     );
     return res.status(200).json({
@@ -87,7 +86,7 @@ const getAllIssues = asyncHandler(async (req, res) => {
 
 // ------------------- GET ONE ISSUE OF A PROJECT --------------------
 const getOneIssue = asyncHandler(async (req, res) => {
-    const issue = await Issue.findById(req.params.id);
+    const issue = await Issue.findById(req.params.issueId);
 
     if (!issue) {
         res.status(404);
@@ -102,7 +101,7 @@ const getOneIssue = asyncHandler(async (req, res) => {
 // ------------------- DELETE ISSUE --------------------
 const deleteIssue = asyncHandler(async (req, res) => {
     // CHECK IF ISSUE EXISTS
-    const issue = await Issue.findById(req.params.id);
+    const issue = await Issue.findById(req.params.issueId);
     if (!issue) {
         res.status(404);
         throw new Error("Issue not found!!");
@@ -138,7 +137,7 @@ const updateIssueStatus = asyncHandler(async (req, res) => {
 
     // CHECK IF ISSUE EXISTS
     const issue = await Issue.findByIdAndUpdate(
-        req.params.id,
+        req.params.issueId,
         {
             status,
         },
@@ -179,7 +178,7 @@ const addChildIssue = asyncHandler(async (req, res) => {
     // CREATING ISSUE
     const createdIssue = await Issue.create({
         projectId: req.body.projectId,
-        parentIssue: req.params.id,
+        parentIssue: req.params.issueId,
         title: req.body.title,
         description: req.body.description,
         status: req.body.status,
@@ -193,7 +192,7 @@ const addChildIssue = asyncHandler(async (req, res) => {
 
     // CHECK IF ISSUE EXISTS AND ADD CHILD
     const issue = await Issue.findByIdAndUpdate(
-        req.params.id,
+        req.params.issueId,
         {
             $push: {
                 childIssues: createdIssue.id,
@@ -230,7 +229,7 @@ const removeChildIssue = asyncHandler(async (req, res) => {
 
     // CHECK IF ISSUE EXISTS
     const issue = await Issue.findByIdAndUpdate(
-        req.params.id,
+        req.params.issueId,
         {
             $pull: {
                 childIssues: childId,
@@ -251,7 +250,7 @@ const removeChildIssue = asyncHandler(async (req, res) => {
 // ------------------- UPLOAD ATTACHMENT ON ISSUE --------------------
 const uploadAttachment = asyncHandler(async (req, res) => {
     // CHECK IF ISSUE EXISTS
-    const issue = await Issue.findById(req.params.id);
+    const issue = await Issue.findById(req.params.issueId);
     if (!issue) {
         res.status(404);
         throw new Error("Issue not found!!");
@@ -266,7 +265,7 @@ const uploadAttachment = asyncHandler(async (req, res) => {
         };
 
         // SAVE TO DB
-        await Issue.findByIdAndUpdate(req.params.id, {
+        await Issue.findByIdAndUpdate(req.params.issueId, {
             attachment: fileData,
         })
             .then(() => console.log("ATTACHMENT ADDED"))
@@ -284,7 +283,7 @@ const uploadAttachment = asyncHandler(async (req, res) => {
 // ------------------- DOWNLOAD ATTACHMENT OF ISSUE --------------------
 const getAttachment = asyncHandler(async (req, res) => {
     // CHECK IF ISSUE EXISTS
-    const issue = await Issue.findById(req.params.id);
+    const issue = await Issue.findById(req.params.issueId);
     if (!issue) {
         res.status(404);
         throw new Error("Issue not found!!");

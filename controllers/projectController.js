@@ -53,7 +53,7 @@ const getAllProjects = asyncHandler(async (req, res) => {
 // ------------------ GET A PROJECT ------------------
 const getProject = asyncHandler(async (req, res) => {
     const project = await Project.findOne({
-        _id: req.params.id,
+        _id: req.params.projectId,
         $or: [
             { owner: req.userId },
             { admins: req.userId },
@@ -76,7 +76,7 @@ const getProject = asyncHandler(async (req, res) => {
 
 // ------------------ DELETE A PROJECT ------------------
 const deleteProject = asyncHandler(async (req, res) => {
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findById(req.params.projectId);
 
     // CHECK IF PROJECT EXISTS
     if (!project) {
@@ -91,7 +91,7 @@ const deleteProject = asyncHandler(async (req, res) => {
         throw new Error("Only OWner can delete this project!!");
     }
 
-    await Project.deleteOne({ _id: req.params.id });
+    await Project.deleteOne({ _id: req.params.projectId });
 
     return res.status(200).json({
         message: "Project deleted successfully!!",
@@ -102,7 +102,7 @@ const deleteProject = asyncHandler(async (req, res) => {
 const updateProject = asyncHandler(async (req, res) => {
     const project = await Project.findOneAndUpdate(
         {
-            _id: req.params.id,
+            _id: req.params.projectId,
             owner: req.userId,
         },
         {
@@ -123,7 +123,7 @@ const updateProject = asyncHandler(async (req, res) => {
 // ------------------ ADD A FAVOURITE PROJECT ------------------
 const addFavouriteProject = asyncHandler(async (req, res) => {
     const project = await Project.findOne({
-        _id: req.params.id,
+        _id: req.params.projectId,
         $or: [
             { owner: req.userId },
             { admins: req.userId },
@@ -144,7 +144,7 @@ const addFavouriteProject = asyncHandler(async (req, res) => {
         req.userId,
         {
             $push: {
-                favoriteProjects: req.params.id,
+                favoriteProjects: req.params.projectId,
             },
         },
         { runValidators: true }
@@ -158,7 +158,7 @@ const addFavouriteProject = asyncHandler(async (req, res) => {
 // ------------------ REMOVE A FAVOURITE PROJECT ------------------
 const removeFavouriteProject = asyncHandler(async (req, res) => {
     const project = await Project.findOne({
-        _id: req.params.id,
+        _id: req.params.projectId,
         $or: [
             { owner: req.userId },
             { admins: req.userId },
@@ -179,7 +179,7 @@ const removeFavouriteProject = asyncHandler(async (req, res) => {
         req.userId,
         {
             $pull: {
-                favoriteProjects: req.params.id,
+                favoriteProjects: req.params.projectId,
             },
         },
         { runValidators: true }
@@ -216,7 +216,7 @@ const addUserToProject = asyncHandler(async (req, res) => {
     }
 
     const project = await Project.findOne({
-        _id: req.params.id,
+        _id: req.params.projectId,
         $or: [{ owner: req.userId }, { admins: req.userId }],
     }).populate("owner");
 
@@ -229,7 +229,7 @@ const addUserToProject = asyncHandler(async (req, res) => {
     }
 
     await Project.findByIdAndUpdate(
-        req.params.id,
+        req.params.projectId,
         {
             $push: {
                 users: userId,
@@ -253,7 +253,7 @@ const removeUserToProject = asyncHandler(async (req, res) => {
     }
 
     const project = await Project.findOne({
-        _id: req.params.id,
+        _id: req.params.projectId,
         $or: [{ owner: req.userId }, { admins: req.userId }],
     }).populate("owner");
 
@@ -266,7 +266,7 @@ const removeUserToProject = asyncHandler(async (req, res) => {
     }
 
     await Project.findByIdAndUpdate(
-        req.params.id,
+        req.params.projectId,
         {
             $pull: {
                 users: userId,
