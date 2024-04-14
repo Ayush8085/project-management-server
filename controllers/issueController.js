@@ -81,6 +81,20 @@ const getAllIssues = asyncHandler(async (req, res) => {
     });
 });
 
+// ------------------- GET ONE ISSUE OF A PROJECT --------------------
+const getOneIssue = asyncHandler(async (req, res) => {
+    const issue = await Issue.findById(req.params.id);
+
+    if (!issue) {
+        res.status(404);
+        throw new Error(
+            "Issue not found or you are not permitted on this project"
+        );
+    }
+
+    return res.status(200).json({ issue });
+});
+
 // ------------------- DELETE ISSUE --------------------
 const deleteIssue = asyncHandler(async (req, res) => {
     // CHECK IF ISSUE EXISTS
@@ -250,7 +264,8 @@ const uploadAttachment = asyncHandler(async (req, res) => {
         // SAVE TO DB
         await Issue.findByIdAndUpdate(req.params.id, {
             attachment: fileData,
-        }).then(() => console.log("ATTACHMENT ADDED"))
+        })
+            .then(() => console.log("ATTACHMENT ADDED"))
             .catch((err) => {
                 res.status(404);
                 throw new Error(err);
@@ -284,6 +299,7 @@ const getAttachment = asyncHandler(async (req, res) => {
 module.exports = {
     createIssue,
     getAllIssues,
+    getOneIssue,
     updateIssueStatus,
     deleteIssue,
     uploadAttachment,

@@ -13,7 +13,7 @@ const router = require("express").Router();
 
 router.post("/login", loginUser);
 router.post("/signup", signupUser);
-router.get("/logout", logoutUser);
+router.get("/logout", authMiddleware, logoutUser);
 router.get("/get-profile", authMiddleware, getUserProfile);
 router.put(
     "/update-profile",

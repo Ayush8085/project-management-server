@@ -8,13 +8,15 @@ const {
     updateIssueStatus,
     addChildIssue,
     removeChildIssue,
+    getOneIssue,
 } = require("../controllers/issueController");
 const upload = require("../utils/upload");
 
 const router = express.Router();
 
 router.post("/create-issue", createIssue);
-router.get("/:id", getAllIssues);
+router.get("/get-all/:id", getAllIssues);
+router.get("/get-one/:id", getOneIssue);
 router.post("/update-status/:id", updateIssueStatus);
 router.post("/add-child-issue/:id", addChildIssue);
 router.delete("/remove-child-issue/:id", removeChildIssue);
