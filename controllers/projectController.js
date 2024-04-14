@@ -199,6 +199,87 @@ const getAllFavouriteProjects = asyncHandler(async (req, res) => {
     });
 });
 
+// ------------------ ADD USER TO PROJECT ------------------
+const addUserToProject = asyncHandler(async (req, res) => {
+    const userId = req.body.userId;
+    // CHECK INPUTS
+    if (!userId) {
+        res.status(404);
+        throw new Error("UserId is required!!");
+    }
+
+    // CHECK IF USER EXISTS
+    const userExists = await User.findById(userId);
+    if (!userExists) {
+        res.status(404);
+        throw new Error("No user found with this userId!!");
+    }
+
+    const project = await Project.findOne({
+        _id: req.params.id,
+        $or: [{ owner: req.userId }, { admins: req.userId }],
+    }).populate("owner");
+
+    // CHECK IF PROJECT EXISTS
+    if (!project) {
+        res.status(404);
+        throw new Error(
+            "Project not found or you are not an admin/owner on this project!!"
+        );
+    }
+
+    await Project.findByIdAndUpdate(
+        req.params.id,
+        {
+            $push: {
+                users: userId,
+            },
+        },
+        { runValidators: true }
+    );
+
+    return res.status(200).json({
+        message: "User added to project successfully!!",
+    });
+});
+
+// ------------------ REMOVE USER TO PROJECT ------------------
+const removeUserToProject = asyncHandler(async (req, res) => {
+    const userId = req.body.userId;
+    // CHECK INPUTS
+    if (!userId) {
+        res.status(404);
+        throw new Error("UserId is required!!");
+    }
+
+    const project = await Project.findOne({
+        _id: req.params.id,
+        $or: [{ owner: req.userId }, { admins: req.userId }],
+    }).populate("owner");
+
+    // CHECK IF PROJECT EXISTS
+    if (!project) {
+        res.status(404);
+        throw new Error(
+            "Project not found or you are not an admin/owner on this project!!"
+        );
+    }
+
+    await Project.findByIdAndUpdate(
+        req.params.id,
+        {
+            $pull: {
+                users: userId,
+            },
+        },
+        { runValidators: true }
+    );
+
+    return res.status(200).json({
+        message: "User removed from project successfully!!",
+    });
+});
+
 module.exports = {
     getAllProjects,
     getProject,
@@ -208,4 +289,6 @@ module.exports = {
     addFavouriteProject,
     removeFavouriteProject,
     getAllFavouriteProjects,
+    addUserToProject,
+    removeUserToProject,
 };
