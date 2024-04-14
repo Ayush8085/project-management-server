@@ -21,7 +21,11 @@ router.post("/update-status/:issueId", updateIssueStatus);
 router.post("/add-child-issue/:issueId", addChildIssue);
 router.delete("/remove-child-issue/:issueId", removeChildIssue);
 router.delete("/:issueId", deleteIssue);
-router.post("/add-attachment/:issueId", upload.single("file"), uploadAttachment);
+router.post(
+    "/add-attachment/:issueId",
+    upload.single("file"),
+    uploadAttachment
+);
 router.get("/get-attachment/:issueId", getAttachment);
 
 module.exports = router;
