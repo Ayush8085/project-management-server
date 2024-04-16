@@ -35,6 +35,14 @@ const issueSchema = new mongoose.Schema(
             type: Object,
             default: {},
         },
+        assigner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+        assignee: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
         childIssues: [
             {
                 type: mongoose.Schema.Types.ObjectId,

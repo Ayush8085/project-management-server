@@ -56,6 +56,53 @@ const createIssue = asyncHandler(async (req, res) => {
     });
 });
 
+// ------------------- UPDATE ISSUE --------------------
+const updateIssue = asyncHandler(async (req, res) => {
+    // CHECK IF ISSUE EXISTS
+    const issue = await Issue.findById(req.params.issueId);
+    if (!issue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    // CHECK IF PROJECT ADMIN, OWNER
+    const project = await Project.findOne({
+        _id: issue.projectId,
+        $or: [{ owner: req.userId }, { admins: req.userId }],
+    });
+
+    if (!project) {
+        res.status(404);
+        throw new Error(
+            "Project not found or you are not permitted on this project!!"
+        );
+    }
+
+    if (req.body.assignee) {
+        await Issue.findByIdAndUpdate(
+            req.params.issueId,
+            {
+                description: req.body.description,
+                assignee: req.body.assignee,
+                assigner: req.userId,
+            },
+            { runValidators: true }
+        );
+    } else {
+        await Issue.findByIdAndUpdate(
+            req.params.issueId,
+            {
+                description: req.body.description,
+            },
+            { runValidators: true }
+        );
+    }
+
+    return res.status(200).json({
+        message: "Issue updated successfully!!",
+    });
+});
+
 // ------------------- GET ALL ISSUES OF A PROJECT --------------------
 const getAllIssues = asyncHandler(async (req, res) => {
     // CHECK IF PROJECT EXISTS
@@ -309,4 +356,5 @@ module.exports = {
     getAttachment,
     addChildIssue,
     removeChildIssue,
+    updateIssue,
 };
