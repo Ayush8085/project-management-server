@@ -59,7 +59,10 @@ const getProject = asyncHandler(async (req, res) => {
             { admins: req.userId },
             { users: req.userId },
         ],
-    }).populate("owner");
+    })
+        .populate("owner")
+        .populate("admins")
+        .populate("users");
 
     // CHECK IF PROJECT EXISTS
     if (!project) {
@@ -226,6 +229,16 @@ const addUserToProject = asyncHandler(async (req, res) => {
         throw new Error(
             "Project not found or you are not an admin/owner on this project!!"
         );
+    }
+
+    // CHECK IF ALREADY IN PROJECT
+    const alreadyInProject = await Project.findOne({
+        users: userId,
+    });
+    if (alreadyInProject) {
+        return res.status(200).json({
+            message: "Already user of this project!!",
+        });
     }
 
     await Project.findByIdAndUpdate(
