@@ -125,7 +125,7 @@ const getAllIssues = asyncHandler(async (req, res) => {
     // GET ALL ISSUES THAN
     const issues = await Issue.find({
         projectId: req.params.projectId,
-    }).populate("createdBy");
+    }).populate("createdBy").populate("childIssues");
     return res.status(200).json({
         issues,
     });
