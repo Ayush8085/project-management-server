@@ -296,9 +296,78 @@ const removeChildIssue = asyncHandler(async (req, res) => {
     });
 });
 
-// ------------------- UPLOAD ATTACHMENT ON ISSUE --------------------
+// ------------------- LINK ISSUES --------------------
+const linkIssue = asyncHandler(async (req, res) => {
+    // CHECK INPUTS
+    const { connectToIssueId } = req.body;
+    if (!connectToIssueId) {
+        res.status(404);
+        throw new Error("connectToIssueId is missing!!");
+    }
+
+    // CHECK IF ISSUES EXISTS
+    const issue = await Issue.findById(req.params.issueId);
+    if (!issue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+    if (issue.linkdedIssues.includes(connectToIssueId)) {
+        return res.status(200).json({
+            message: "Already connected!!",
+        });
+    }
+    const connectToIssue = await Issue.findById(connectToIssueId);
+    if (!connectToIssue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    await issue.updateOne({ $push: { linkdedIssues: connectToIssueId } });
+    await connectToIssue.updateOne({
+        $push: { linkdedIssues: req.params.issueId },
+    });
+
+    return res.status(200).json({
+        message: "Issue connected successfully!!",
+    });
+});
+
+// ------------------- REMOVE LINK ISSUES --------------------
+const removelinkIssue = asyncHandler(async (req, res) => {
+    // CHECK INPUTS
+    const { connectToIssueId } = req.body;
+    if (!connectToIssueId) {
+        res.status(404);
+        throw new Error("connectToIssueId is missing!!");
+    }
+
+    // CHECK IF ISSUES EXISTS
+    const issue = await Issue.findById(req.params.issueId);
+    if (!issue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+    const connectToIssue = await Issue.findById(connectToIssueId);
+    if (!connectToIssue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    await issue.updateOne({ $pull: { linkdedIssues: connectToIssueId } });
+    await connectToIssue.updateOne({
+        $pull: { linkdedIssues: req.params.issueId },
+    });
+
+    return res.status(200).json({
+        message: "Issue disconnected successfully!!",
+    });
+});
+
+// ------------------- GET ALL CHILD ISSUES OF AN ISSUE --------------------
 const getAllChildIssue = asyncHandler(async (req, res) => {
-    const issue = await Issue.findById(req.params.issueId).populate("childIssues");
+    const issue = await Issue.findById(req.params.issueId).populate(
+        "childIssues"
+    );
     if (!issue) {
         res.status(404);
         throw new Error("Issue not found!!");
@@ -373,4 +442,6 @@ module.exports = {
     removeChildIssue,
     updateIssue,
     getAllChildIssue,
+    linkIssue,
+    removelinkIssue,
 };

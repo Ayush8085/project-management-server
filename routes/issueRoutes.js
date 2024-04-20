@@ -11,6 +11,8 @@ const {
     getOneIssue,
     updateIssue,
     getAllChildIssue,
+    linkIssue,
+    removelinkIssue,
 } = require("../controllers/issueController");
 const upload = require("../utils/upload");
 
@@ -20,6 +22,8 @@ router.post("/create-issue", createIssue);
 router.get("/get-all/:projectId", getAllIssues);
 router.get("/get-one/:issueId", getOneIssue);
 router.get("/get-all-child/:issueId", getAllChildIssue);
+router.post("/link-issue/:issueId", linkIssue);
+router.post("/remove-link-issue/:issueId", removelinkIssue);
 router.post("/update-status/:issueId", updateIssueStatus);
 router.put("/update-issue/:issueId", updateIssue);
 router.post("/add-child-issue/:issueId", addChildIssue);

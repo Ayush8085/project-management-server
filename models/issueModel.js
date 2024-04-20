@@ -49,6 +49,12 @@ const issueSchema = new mongoose.Schema(
                 ref: "Issue",
             },
         ],
+        linkdedIssues: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Issue",
+            },
+        ],
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
