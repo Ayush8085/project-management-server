@@ -125,7 +125,9 @@ const getAllIssues = asyncHandler(async (req, res) => {
     // GET ALL ISSUES THAN
     const issues = await Issue.find({
         projectId: req.params.projectId,
-    }).populate("createdBy").populate("childIssues");
+    })
+        .populate("createdBy")
+        .populate("childIssues");
     return res.status(200).json({
         issues,
     });
@@ -295,6 +297,19 @@ const removeChildIssue = asyncHandler(async (req, res) => {
 });
 
 // ------------------- UPLOAD ATTACHMENT ON ISSUE --------------------
+const getAllChildIssue = asyncHandler(async (req, res) => {
+    const issue = await Issue.findById(req.params.issueId).populate("childIssues");
+    if (!issue) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    return res.status(200).json({
+        childIssues: issue.childIssues,
+    });
+});
+
+// ------------------- UPLOAD ATTACHMENT ON ISSUE --------------------
 const uploadAttachment = asyncHandler(async (req, res) => {
     // CHECK IF ISSUE EXISTS
     const issue = await Issue.findById(req.params.issueId);
@@ -357,4 +372,5 @@ module.exports = {
     addChildIssue,
     removeChildIssue,
     updateIssue,
+    getAllChildIssue,
 };
