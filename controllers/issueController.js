@@ -258,6 +258,7 @@ const addChildIssue = asyncHandler(async (req, res) => {
 
     return res.status(201).json({
         message: "Child added to issue successfully!!",
+        childIssue: issue,
     });
 });
 
