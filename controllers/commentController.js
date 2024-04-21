@@ -32,6 +32,8 @@ const createComment = asyncHandler(async (req, res) => {
         },
     });
 
+    await comment.populate("userId");
+
     return res.status(201).json({
         message: "Comment created and added to the issue!!",
         comment,
@@ -41,14 +43,16 @@ const createComment = asyncHandler(async (req, res) => {
 // ------------------- GET ALL THE COMMENTS OF AN ISSUE --------------------
 const getAllComments = asyncHandler(async (req, res) => {
     // CHECK FOR ISSUE
-    const issue = await Issue.findById(req.params.issueId).populate("comments");
-    if (!issue) {
+    const comments = await Comment.find({
+        issueId: req.params.issueId,
+    }).populate("userId");
+    if (!comments) {
         res.status(404);
         throw new Error("Issue not found!!");
     }
 
     return res.status(200).json({
-        comments: issue.comments,
+        comments,
     });
 });
 

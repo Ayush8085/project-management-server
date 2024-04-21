@@ -14,7 +14,7 @@ const issueSchema = new mongoose.Schema(
         isChild: {
             type: Boolean,
             required: true,
-            default: false
+            default: false,
         },
         title: {
             type: String,
