@@ -305,12 +305,11 @@ const getAllNotProjectUser = asyncHandler(async (req, res) => {
         $and: [
             { _id: { $nin: project.admins } },
             { _id: { $nin: project.users } },
-        ]
+        ],
     });
 
     return res.status(200).json(users);
-})
-
+});
 
 module.exports = {
     getAllProjects,
