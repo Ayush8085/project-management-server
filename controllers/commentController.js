@@ -47,7 +47,7 @@ const getAllComments = asyncHandler(async (req, res) => {
         issueId: req.params.issueId,
     })
         .populate("userId")
-        .sort("createdAt");
+        .sort("-createdAt");
     if (!comments) {
         res.status(404);
         throw new Error("Issue not found!!");

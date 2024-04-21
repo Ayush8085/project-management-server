@@ -130,7 +130,7 @@ const getAllIssues = asyncHandler(async (req, res) => {
         .populate("createdBy")
         .populate("parentIssue")
         .populate("childIssues")
-        .sort("createdAt");
+        .sort("-createdAt");
     return res.status(200).json({
         issues,
     });
@@ -344,7 +344,7 @@ const getAllChildIssue = asyncHandler(async (req, res) => {
         isChild: true,
     })
         .populate("parentIssue")
-        .sort("createdAt");
+        .sort("-createdAt");
     if (!childIssues) {
         res.status(404);
         throw new Error("Issue not found!!");
