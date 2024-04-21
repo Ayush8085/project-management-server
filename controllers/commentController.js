@@ -45,7 +45,9 @@ const getAllComments = asyncHandler(async (req, res) => {
     // CHECK FOR ISSUE
     const comments = await Comment.find({
         issueId: req.params.issueId,
-    }).populate("userId");
+    })
+        .populate("userId")
+        .sort("createdAt");
     if (!comments) {
         res.status(404);
         throw new Error("Issue not found!!");

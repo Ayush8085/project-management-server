@@ -129,7 +129,8 @@ const getAllIssues = asyncHandler(async (req, res) => {
     })
         .populate("createdBy")
         .populate("parentIssue")
-        .populate("childIssues");
+        .populate("childIssues")
+        .sort("createdAt");
     return res.status(200).json({
         issues,
     });
@@ -336,6 +337,24 @@ const linkIssue = asyncHandler(async (req, res) => {
     });
 });
 
+// ------------------- GET ALL CHILD ISSUES OF AN ISSUE --------------------
+const getAllChildIssue = asyncHandler(async (req, res) => {
+    const childIssues = await Issue.find({
+        parentIssue: req.params.issueId,
+        isChild: true,
+    })
+        .populate("parentIssue")
+        .sort("createdAt");
+    if (!childIssues) {
+        res.status(404);
+        throw new Error("Issue not found!!");
+    }
+
+    return res.status(200).json({
+        childIssues,
+    });
+});
+
 // ------------------- REMOVE LINK ISSUES --------------------
 const removelinkIssue = asyncHandler(async (req, res) => {
     // CHECK INPUTS
@@ -364,22 +383,6 @@ const removelinkIssue = asyncHandler(async (req, res) => {
 
     return res.status(200).json({
         message: "Issue disconnected successfully!!",
-    });
-});
-
-// ------------------- GET ALL CHILD ISSUES OF AN ISSUE --------------------
-const getAllChildIssue = asyncHandler(async (req, res) => {
-    const childIssues = await Issue.find({
-        parentIssue: req.params.issueId,
-        isChild: true,
-    }).populate("parentIssue");
-    if (!childIssues) {
-        res.status(404);
-        throw new Error("Issue not found!!");
-    }
-
-    return res.status(200).json({
-        childIssues,
     });
 });
 
