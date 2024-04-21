@@ -125,8 +125,10 @@ const getAllIssues = asyncHandler(async (req, res) => {
     // GET ALL ISSUES THAN
     const issues = await Issue.find({
         projectId: req.params.projectId,
+        isChild: false
     })
         .populate("createdBy")
+        .populate("parentIssue")
         .populate("childIssues");
     return res.status(200).json({
         issues,
@@ -228,6 +230,7 @@ const addChildIssue = asyncHandler(async (req, res) => {
     const createdIssue = await Issue.create({
         projectId: req.body.projectId,
         parentIssue: req.params.issueId,
+        isChild: true,
         title: req.body.title,
         description: req.body.description,
         status: req.body.status,

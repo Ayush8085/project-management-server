@@ -11,6 +11,11 @@ const issueSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Issue",
         },
+        isChild: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
         title: {
             type: String,
             required: true,
