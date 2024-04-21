@@ -369,16 +369,17 @@ const removelinkIssue = asyncHandler(async (req, res) => {
 
 // ------------------- GET ALL CHILD ISSUES OF AN ISSUE --------------------
 const getAllChildIssue = asyncHandler(async (req, res) => {
-    const issue = await Issue.findById(req.params.issueId).populate(
-        "childIssues"
-    );
-    if (!issue) {
+    const childIssues = await Issue.find({
+        parentIssue: req.params.issueId,
+        isChild: true,
+    }).populate("parentIssue");
+    if (!childIssues) {
         res.status(404);
         throw new Error("Issue not found!!");
     }
 
     return res.status(200).json({
-        childIssues: issue.childIssues,
+        childIssues,
     });
 });
 
