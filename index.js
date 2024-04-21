@@ -6,6 +6,7 @@ const errorMiddleware = require("./middlewares/errorMiddleware");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const issueRoutes = require("./routes/issueRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 const cors = require("cors");
 const authMiddleware = require("./middlewares/authMiddleware");
 
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/projects", authMiddleware, projectRoutes);
 app.use("/api/v1/issues", authMiddleware, issueRoutes);
+app.use("/api/v1/comments", authMiddleware, commentRoutes);
 
 // ------------- ERROR MIDDLEWARE -------------
 app.use(errorMiddleware);
