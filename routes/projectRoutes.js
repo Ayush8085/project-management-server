@@ -7,6 +7,7 @@ const {
     addFavouriteProject,
     removeFavouriteProject,
     getAllFavouriteProjects,
+    getAllNotProjectUser,
     addUserToProject,
     removeUserToProject,
 } = require("../controllers/projectController");
@@ -17,6 +18,7 @@ router.post("/create-project", createProject);
 router.get("/", getAllProjects);
 router.get("/get-all-fav-projects", getAllFavouriteProjects);
 router.get("/:projectId", getProject);
+router.post("/get-all-not-project-user/:projectId", getAllNotProjectUser);
 router.delete("/:projectId", deleteProject);
 router.put("/:projectId", updateProject);
 router.post("/add-favour-project/:projectId", addFavouriteProject);

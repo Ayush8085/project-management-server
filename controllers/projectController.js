@@ -293,6 +293,25 @@ const removeUserToProject = asyncHandler(async (req, res) => {
     });
 });
 
+// ------------------ GET ALL THE USERS NOT ON THE PROJECT ------------------
+const getAllNotProjectUser = asyncHandler(async (req, res) => {
+    const project = await Project.findById(req.params.projectId);
+    if (!project) {
+        res.status(404);
+        throw new Error("Project not found");
+    }
+
+    const users = await User.find({
+        $and: [
+            { _id: { $nin: project.admins } },
+            { _id: { $nin: project.users } },
+        ]
+    });
+
+    return res.status(200).json(users);
+})
+
+
 module.exports = {
     getAllProjects,
     getProject,
@@ -304,4 +323,5 @@ module.exports = {
     getAllFavouriteProjects,
     addUserToProject,
     removeUserToProject,
+    getAllNotProjectUser,
 };
