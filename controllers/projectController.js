@@ -295,12 +295,14 @@ const removeUserToProject = asyncHandler(async (req, res) => {
 
 // ------------------ GET ALL THE USERS NOT ON THE PROJECT ------------------
 const getAllNotProjectUser = asyncHandler(async (req, res) => {
+    // CHECK IF PROJECT EXISTS
     const project = await Project.findById(req.params.projectId);
     if (!project) {
         res.status(404);
         throw new Error("Project not found");
     }
 
+    // EXCLUDE ALL THE USERS OF PROJECT
     const users = await User.find({
         $and: [
             { _id: { $nin: project.admins } },
@@ -309,6 +311,64 @@ const getAllNotProjectUser = asyncHandler(async (req, res) => {
     });
 
     return res.status(200).json(users);
+});
+
+// ------------------ CHANGE ROLE ON PROJECT ------------------
+const changeRole = asyncHandler(async (req, res) => {
+    // CHECK INPUT
+    const { role, userId } = req.body;
+
+    const project = await Project.findOne({
+        _id: req.params.projectId,
+        $or: [{ owner: req.userId }, { admins: req.userId }],
+    });
+
+    // CHECK IF PROJECT EXISTS
+    if (!project) {
+        res.status(404);
+        throw new Error(
+            "Project not found or you are not an admin/owner on this project!!"
+        );
+    }
+
+    // REMOVING USER FROM PROJECT
+    await Project.findByIdAndUpdate(
+        req.params.projectId,
+        {
+            $pull: {
+                admins: userId,
+                users: userId,
+            },
+        },
+        { runValidators: true }
+    );
+
+    // ADDING USER TO THE PROJECT AGAIN
+    if (role === "admin") {
+        await Project.findByIdAndUpdate(
+            req.params.projectId,
+            {
+                $push: {
+                    admins: userId,
+                },
+            },
+            { runValidators: true }
+        );
+    } else if (role === "user") {
+        await Project.findByIdAndUpdate(
+            req.params.projectId,
+            {
+                $push: {
+                    users: userId,
+                },
+            },
+            { runValidators: true }
+        );
+    }
+
+    return res.status(200).json({
+        message: "User's role changed successfully!!",
+    });
 });
 
 module.exports = {
@@ -323,4 +383,5 @@ module.exports = {
     addUserToProject,
     removeUserToProject,
     getAllNotProjectUser,
+    changeRole,
 };
