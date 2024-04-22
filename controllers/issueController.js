@@ -336,9 +336,6 @@ const linkIssue = asyncHandler(async (req, res) => {
     }
 
     await issue.updateOne({ $push: { linkdedIssues: connectToIssueId } });
-    await connectToIssue.updateOne({
-        $push: { linkdedIssues: req.params.issueId },
-    });
 
     return res.status(200).json({
         message: "Issue connected successfully!!",
