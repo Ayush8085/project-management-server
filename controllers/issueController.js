@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const zod = require("zod");
 const Project = require("../models/projectModel");
 const Issue = require("../models/issueModel");
+const User = require("../models/userModel");
 
 // ------------------- CREATE ISSUE --------------------
 const createIssue = asyncHandler(async (req, res) => {
@@ -88,6 +89,11 @@ const updateIssue = asyncHandler(async (req, res) => {
             },
             { runValidators: true }
         );
+        const assignee = await User.findById(req.body.assignee);
+        return res.status(200).json({
+            message: "Issue updated successfully!!",
+            assignee,
+        });
     } else {
         await Issue.findByIdAndUpdate(
             req.params.issueId,
@@ -130,7 +136,9 @@ const getAllIssues = asyncHandler(async (req, res) => {
         .populate("createdBy")
         .populate("parentIssue")
         .populate("childIssues")
+        .populate("assignee")
         .sort("-createdAt");
+
     return res.status(200).json({
         issues,
     });
@@ -138,7 +146,7 @@ const getAllIssues = asyncHandler(async (req, res) => {
 
 // ------------------- GET ONE ISSUE OF A PROJECT --------------------
 const getOneIssue = asyncHandler(async (req, res) => {
-    const issue = await Issue.findById(req.params.issueId);
+    const issue = await Issue.findById(req.params.issueId).populate("assignee");
 
     if (!issue) {
         res.status(404);
@@ -344,6 +352,7 @@ const getAllChildIssue = asyncHandler(async (req, res) => {
         isChild: true,
     })
         .populate("parentIssue")
+        .populate("assignee")
         .sort("-createdAt");
     if (!childIssues) {
         res.status(404);
