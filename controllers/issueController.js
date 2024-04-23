@@ -110,6 +110,39 @@ const updateIssue = asyncHandler(async (req, res) => {
 });
 
 // ------------------- GET ALL ISSUES OF A PROJECT --------------------
+const getAllIssuesOfProject = asyncHandler(async (req, res) => {
+    // CHECK IF PROJECT EXISTS
+    const project = await Project.findOne({
+        _id: req.params.projectId,
+        $or: [
+            { owner: req.userId },
+            { admins: req.userId },
+            { users: req.userId },
+        ],
+    });
+
+    if (!project) {
+        res.status(404);
+        throw new Error(
+            "Project not found or you are not permitted on this project!!"
+        );
+    }
+
+    // GET ALL ISSUES THAN
+    const issues = await Issue.find({
+        projectId: req.params.projectId,
+    })
+        .populate("createdBy")
+        .populate("parentIssue")
+        .populate("childIssues")
+        .populate("assignee")
+        .sort("-createdAt");
+
+    return res.status(200).json({
+        issues,
+    });
+});
+// ------------------- GET ALL ISSUES OF A PROJECT --------------------
 const getAllIssues = asyncHandler(async (req, res) => {
     // CHECK IF PROJECT EXISTS
     const project = await Project.findOne({
@@ -458,4 +491,5 @@ module.exports = {
     getAllChildIssue,
     linkIssue,
     removelinkIssue,
+    getAllIssuesOfProject,
 };

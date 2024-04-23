@@ -13,6 +13,7 @@ const {
     getAllChildIssue,
     linkIssue,
     removelinkIssue,
+    getAllIssuesOfProject,
 } = require("../controllers/issueController");
 const upload = require("../utils/upload");
 
@@ -20,6 +21,7 @@ const router = express.Router();
 
 router.post("/create-issue", createIssue);
 router.get("/get-all/:projectId", getAllIssues);
+router.get("/get-all-issues-project/:projectId", getAllIssuesOfProject);
 router.get("/get-one/:issueId", getOneIssue);
 router.get("/get-all-child/:issueId", getAllChildIssue);
 router.post("/link-issue/:issueId", linkIssue);
