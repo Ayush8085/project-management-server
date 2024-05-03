@@ -1,5 +1,5 @@
 const express = require("express");
-const { PORT, MONGO_URI } = require("./config");
+const { PORT, MONGO_URI, FRONTEND_URL } = require("./config");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./middlewares/errorMiddleware");
@@ -16,8 +16,7 @@ const app = express();
 app.use(
     cors({
         credentials: true,
-        origin: "http://localhost:5173",
-        // origin: "*",
+        origin: FRONTEND_URL,
     })
 );
 app.use(express.json());
