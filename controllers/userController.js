@@ -50,11 +50,11 @@ const loginUser = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .cookie("accessToken", accessToken, {
-            secure: false,
+            secure: true,
             httpOnly: true,
         })
         .cookie("refreshToken", refreshToken, {
-            secure: false,
+            secure: true,
             httpOnly: true,
         })
         .json({
@@ -118,11 +118,11 @@ const signupUser = asyncHandler(async (req, res) => {
     return res
         .status(201)
         .cookie("accessToken", accessToken, {
-            secure: false,
+            secure: true,
             httpOnly: true,
         })
         .cookie("refreshToken", refreshToken, {
-            secure: false,
+            secure: true,
             httpOnly: true,
         })
         .json({
@@ -170,11 +170,11 @@ const accessTokenFromRefreshToken = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .cookie("accessToken", accessToken, {
-            secure: false,
+            secure: true,
             httpOnly: true,
         })
         .cookie("refreshToken", incomingRefreshToken, {
-            secure: false,
+            secure: true,
             httpOnly: true,
         })
         .json({
@@ -244,7 +244,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .cookie("accessToken", accessToken, {
-            secure: false,
+            secure: true,
             httpOnly: true,
         })
         .json({
