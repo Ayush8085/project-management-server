@@ -9,8 +9,14 @@ const issueRoutes = require("./routes/issueRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const cors = require("cors");
 const authMiddleware = require("./middlewares/authMiddleware");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
+const limiter = rateLimit({
+    max: 5,
+    windowMs: 60 * 1000,    // 1 min
+    message: "Too many requests from this IP, please try again after 1 min",
+})
 
 // ------------- MIDDLEWARES -------------
 app.use(
@@ -21,6 +27,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use("/api/", limiter);
 
 // ------------- ROUTES MIDDLEWARES -------------
 app.use("/api/v1/users", userRoutes);
